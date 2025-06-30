@@ -7,6 +7,7 @@
     "dev": "nodemon src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
+    "seed": "ts-node src/seedDatabase.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -14,9 +15,12 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@types/mongodb": "^4.0.6",
     "cors": "^2.8.5",
     "dotenv": "^17.0.0",
     "express": "^5.1.0",
+    "mongodb": "^6.17.0",
+    "mongoose": "^8.16.1",
     "openai": "^5.8.2"
   },
   "devDependencies": {
