@@ -42,8 +42,11 @@ export const collections: CollectionInfo[] = [
       {
         _id: "1",
         customerId: "cust123",
-        products: ["prod1", "prod2"],
-        totalAmount: 1500.0,
+        products: [
+          { productId: "prod1", quantity: 1, price: 1299.99 },
+          { productId: "prod2", quantity: 2, price: 29.99 },
+        ],
+        totalAmount: 1359.97,
         status: "completed",
         orderDate: "2024-01-15",
         shippingAddress: "123 Main St, City, State",

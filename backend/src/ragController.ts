@@ -37,10 +37,17 @@ export const handleQuestion = async (
 
     // Execute the generated query
     const collection = db.collection(collectionName);
-    const results = await collection
-      .find(query, projection)
-      .limit(10)
-      .toArray();
+
+    let results: any[] = [];
+
+    // Check if query is an aggregation pipeline (array) or a find query (object)
+    if (Array.isArray(query)) {
+      // Handle aggregation pipeline
+      results = await collection.aggregate(query).limit(10).toArray();
+    } else {
+      // Handle find query
+      results = await collection.find(query, projection).limit(10).toArray();
+    }
 
     if (results.length === 0) {
       res.json({

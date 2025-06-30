@@ -29,6 +29,33 @@ const sampleData = {
       brand: "ComfortCo",
       tags: ["chair", "office", "ergonomic"],
     },
+    {
+      name: "Gaming Monitor",
+      category: "electronics",
+      price: 399.99,
+      description: "27-inch 4K gaming monitor with 144Hz refresh rate",
+      inStock: true,
+      brand: "GameTech",
+      tags: ["monitor", "gaming", "4k"],
+    },
+    {
+      name: "Desk Lamp",
+      category: "furniture",
+      price: 49.99,
+      description: "LED desk lamp with adjustable brightness",
+      inStock: true,
+      brand: "LightCo",
+      tags: ["lamp", "led", "adjustable"],
+    },
+    {
+      name: "Mechanical Keyboard",
+      category: "electronics",
+      price: 149.99,
+      description: "RGB mechanical keyboard with blue switches",
+      inStock: true,
+      brand: "KeyTech",
+      tags: ["keyboard", "mechanical", "rgb"],
+    },
   ],
   customers: [
     {
@@ -47,22 +74,66 @@ const sampleData = {
       joinDate: "2023-02-15",
       preferences: ["furniture", "home-decor"],
     },
+    {
+      name: "Bob Wilson",
+      email: "bob@example.com",
+      phone: "+1234567892",
+      address: "789 Pine Rd, City, State",
+      joinDate: "2023-03-10",
+      preferences: ["electronics", "gaming"],
+    },
   ],
   orders: [
     {
       customerId: "cust123",
-      products: ["1", "2"],
-      totalAmount: 1329.98,
+      products: [
+        { productId: "prod1", quantity: 1, price: 1299.99 },
+        { productId: "prod2", quantity: 2, price: 29.99 },
+      ],
+      totalAmount: 1359.97,
       status: "completed",
       orderDate: "2024-01-15",
       shippingAddress: "123 Main St, City, State",
     },
     {
       customerId: "cust456",
-      products: ["3"],
+      products: [{ productId: "prod3", quantity: 1, price: 199.99 }],
       totalAmount: 199.99,
-      status: "pending",
+      status: "completed",
       orderDate: "2024-01-20",
+      shippingAddress: "456 Oak Ave, City, State",
+    },
+    {
+      customerId: "cust789",
+      products: [
+        { productId: "prod4", quantity: 1, price: 399.99 },
+        { productId: "prod6", quantity: 1, price: 149.99 },
+      ],
+      totalAmount: 549.98,
+      status: "completed",
+      orderDate: "2024-01-25",
+      shippingAddress: "789 Pine Rd, City, State",
+    },
+    {
+      customerId: "cust123",
+      products: [
+        { productId: "prod5", quantity: 1, price: 49.99 },
+        { productId: "prod2", quantity: 1, price: 29.99 },
+      ],
+      totalAmount: 79.98,
+      status: "completed",
+      orderDate: "2024-02-01",
+      shippingAddress: "123 Main St, City, State",
+    },
+    {
+      customerId: "cust456",
+      products: [
+        { productId: "prod3", quantity: 2, price: 199.99 },
+        { productId: "prod5", quantity: 1, price: 49.99 },
+      ],
+      totalAmount: 449.97,
+      status: "completed",
+      orderDate: "2024-02-05",
       shippingAddress: "456 Oak Ave, City, State",
     },
   ],
@@ -98,15 +169,37 @@ export const seedDatabase = async (): Promise<void> => {
       await db.collection(collectionName).deleteMany({});
     }
 
-    // Insert sample data
-    for (const [collectionName, documents] of Object.entries(sampleData)) {
-      if (Array.isArray(documents) && documents.length > 0) {
-        await db.collection(collectionName).insertMany(documents);
-        console.log(
-          `Inserted ${documents.length} documents into ${collectionName}`
-        );
-      }
-    }
+    // Insert products first and store their ObjectIds
+    const productsResult = await db
+      .collection("products")
+      .insertMany(sampleData.products);
+    const productIds = Object.values(productsResult.insertedIds);
+
+    // Create a mapping from product index to ObjectId
+    const productIdMap = {
+      prod1: productIds[0],
+      prod2: productIds[1],
+      prod3: productIds[2],
+      prod4: productIds[3],
+      prod5: productIds[4],
+      prod6: productIds[5],
+    };
+
+    // Update orders with proper ObjectId references
+    const ordersWithObjectIds = sampleData.orders.map((order) => ({
+      ...order,
+      products: order.products.map((product) => ({
+        ...product,
+        productId: productIdMap[product.productId as keyof typeof productIdMap],
+      })),
+    }));
+
+    // Insert other collections
+    await db.collection("orders").insertMany(ordersWithObjectIds);
+    await db.collection("customers").insertMany(sampleData.customers);
+    await db
+      .collection("support_tickets")
+      .insertMany(sampleData.support_tickets);
 
     console.log("Database seeded successfully!");
   } catch (error) {
