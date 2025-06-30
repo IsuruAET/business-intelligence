@@ -7,4 +7,18 @@ export default defineConfig({
   server: {
     port: 3000,
   },
+  resolve: {
+    alias: {
+      "@emotion/react": "@emotion/react",
+      "@emotion/styled": "@emotion/styled",
+    },
+  },
+  optimizeDeps: {
+    include: [
+      "@emotion/react",
+      "@emotion/styled",
+      "@mui/material",
+      "@mui/styled-engine",
+    ],
+  },
 });
