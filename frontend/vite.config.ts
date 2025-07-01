@@ -21,4 +21,12 @@ export default defineConfig({
       "@mui/styled-engine",
     ],
   },
+  build: {
+    rollupOptions: {
+      external: [],
+    },
+  },
+  define: {
+    global: "globalThis",
+  },
 });
