@@ -25,17 +25,23 @@ app.get("/api/health", (req, res) => {
   res.json({ status: "ok", message: "Server is running" });
 });
 
-const startServer = async () => {
-  try {
-    await connectToDatabase();
+// Initialize database connection for local development
+if (process.env.NODE_ENV !== "production") {
+  const startServer = async () => {
+    try {
+      await connectToDatabase();
 
-    app.listen(PORT, () => {
-      console.log(`Server running on http://localhost:${PORT}`);
-    });
-  } catch (error) {
-    console.error("Failed to start server:", error);
-    process.exit(1);
-  }
-};
+      app.listen(PORT, () => {
+        console.log(`Server running on http://localhost:${PORT}`);
+      });
+    } catch (error) {
+      console.error("Failed to start server:", error);
+      process.exit(1);
+    }
+  };
 
-startServer();
+  startServer();
+}
+
+// For Vercel serverless deployment
+export default app;
