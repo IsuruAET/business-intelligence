@@ -20,6 +20,11 @@ app.use(express.json());
 
 app.post("/api/ask", handleQuestion);
 
+// Health check endpoint
+app.get("/api/health", (req, res) => {
+  res.json({ status: "ok", message: "Server is running" });
+});
+
 // Initialize database connection
 const startServer = async () => {
   try {

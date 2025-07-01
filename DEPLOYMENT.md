@@ -50,6 +50,7 @@ This guide provides step-by-step instructions for deploying the Business Intelli
    OPENAI_API_KEY=your_openai_api_key
    PORT=5000
    DB_NAME=business_intelligence
+   FRONTEND_URL=https://your-frontend-vercel-url.vercel.app
    ```
 
 ### Frontend Environment Variables
